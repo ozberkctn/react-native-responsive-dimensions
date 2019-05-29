@@ -23,8 +23,10 @@
  */
 
 import {
-  Dimensions
+  Dimensions,StatusBar,Platform
 } from 'react-native';
+import { isIphoneX } from "react-native-iphone-x-helper";
+
 
 const {height, width} = Dimensions.get('window');
 
@@ -36,7 +38,14 @@ export const responsiveWidth = (w) => {
   return width*(w/100);
 };
 
-export const responsiveFontSize = (f) => {
-  const tempHeight = (16/9)*width;
-  return Math.sqrt(Math.pow(tempHeight, 2) + Math.pow(width, 2))*(f/100);
+export const responsiveFontSize = (size) => {
+  const percent = size *1.12;
+  const deviceHeight = isIphoneX()
+    ? height - 78 // iPhone X style SafeAreaView size in portrait
+    : Platform.OS === "android"
+    ? height - StatusBar.currentHeight
+    : height;
+
+  const heightPercent = (percent * deviceHeight) / 100;
+  return Math.round(heightPercent);
 };
